@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Diwali 🪔✨</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts for Festive Aesthetics -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Canvas Confetti & QR Code Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        festive: {
+                            red: '#7f1d1d',
+                            maroon: '#450a0a',
+                            gold: '#fbbf24',
+                            lightGold: '#fef08a'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                    animation: {
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { filter: 'drop-shadow(0 0 5px rgba(251, 191, 36, 0.4))' },
+                            '100%': { filter: 'drop-shadow(0 0 20px rgba(251, 191, 36, 0.9))' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            /* Rich festive background gradient */
+            background: linear-gradient(135deg, #1a0505 0%, #450a0a 50%, #7f1d1d 100%);
+            background-attachment: fixed;
+            color: #fff;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #fef08a, #fbbf24, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #fbbf24; border-radius: 10px; }
+    </style>
+</head>
+<body class="min-h-screen font-sans flex items-center justify-center p-4 relative overflow-x-hidden">
+
+    <!-- Ambient background decorations -->
+    <div class="fixed top-10 left-10 text-4xl animate-float opacity-30 pointer-events-none">🪔</div>
+    <div class="fixed bottom-20 right-10 text-4xl animate-float opacity-30 pointer-events-none" style="animation-delay: 1s;">✨</div>
+    <div class="fixed top-32 right-20 text-3xl animate-float opacity-20 pointer-events-none" style="animation-delay: 2s;">🎆</div>
+
+    <!-- VIEW 1: CREATE GREETING -->
+    <div id="view-create" class="w-full max-w-md glass-card rounded-3xl p-8 relative z-10 hidden">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-serif text-gradient mb-2">Create Shagun</h1>
+            <p class="text-festive-lightGold opacity-80 text-sm">Send a magical Diwali wish to your loved ones ✨</p>
+        </div>
+
+        <form id="create-form" class="space-y-5">
+            <div>
+                <label class="block text-festive-lightGold text-sm font-semibold mb-1">Your Name</label>
+                <input type="text" id="input-sender" required placeholder="e.g. Rahul" 
+                    class="w-full bg-black/30 border border-festive-gold/30 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-festive-gold transition-colors">
+            </div>
+            <div>
+                <label class="block text-festive-lightGold text-sm font-semibold mb-1">Receiver's Name</label>
+                <input type="text" id="input-receiver" required placeholder="e.g. Priya" 
+                    class="w-full bg-black/30 border border-festive-gold/30 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-festive-gold transition-colors">
+            </div>
+            <div>
+                <label class="block text-festive-lightGold text-sm font-semibold mb-1">Special Message</label>
+                <textarea id="input-message" required rows="3" placeholder="Wishing you a Diwali full of light, joy, and prosperity..." 
+                    class="w-full bg-black/30 border border-festive-gold/30 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-festive-gold transition-colors resize-none"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-gradient-to-r from-yellow-600 to-yellow-400 hover:from-yellow-500 hover:to-yellow-300 text-black font-bold py-3.5 px-6 rounded-xl transition-all transform hover:scale-[1.02] active:scale-95 shadow-[0_0_15px_rgba(251,191,36,0.4)]">
+                Generate Magic Link 🪔
+            </button>
+        </form>
+
+        <!-- Share Link Section (Hidden initially) -->
+        <div id="share-section" class="mt-6 hidden bg-black/40 p-4 rounded-xl border border-festive-gold/20 text-center">
+            <p class="text-sm text-green-400 mb-2 font-semibold">✨ Link Generated Successfully!</p>
+            <div class="flex items-center gap-2">
+                <input type="text" id="generated-url" readonly class="w-full bg-black/50 border border-gray-600 rounded-lg px-3 py-2 text-xs text-gray-300 outline-none">
+                <button id="copy-btn" class="bg-festive-gold text-black px-4 py-2 rounded-lg text-sm font-bold hover:bg-yellow-400 transition-colors whitespace-nowrap">
+                    Copy
+                </button>
+            </div>
+            <p class="text-xs text-gray-400 mt-3">Share this link via WhatsApp or Instagram!</p>
+            <button onclick="window.open(document.getElementById('generated-url').value, '_self')" class="mt-3 text-festive-lightGold text-sm underline opacity-80 hover:opacity-100">
+                Preview Card
+            </button>
+        </div>
+    </div>
+
+    <!-- VIEW 2: RECEIVER GREETING CARD -->
+    <div id="view-card" class="w-full max-w-lg relative z-10 hidden pb-10">
+        <!-- The Greeting -->
+        <div class="glass-card rounded-3xl p-8 sm:p-10 text-center relative overflow-hidden mb-6 border-t-4 border-t-festive-gold">
+            <div class="text-6xl mb-4 animate-glow">🪔</div>
+            <h2 class="text-xl text-festive-lightGold mb-1 font-medium">To <span id="display-receiver" class="font-bold text-white"></span>,</h2>
+            <h1 class="text-4xl sm:text-5xl font-serif text-gradient my-4 leading-tight">Happy<br>Diwali!</h1>
+            
+            <div class="relative py-6">
+                <div class="absolute inset-0 flex items-center justify-center opacity-10">
+                    <span class="text-9xl">✨</span>
+                </div>
+                <p id="display-message" class="text-lg text-gray-100 italic relative z-10 leading-relaxed font-serif"></p>
+            </div>
+            
+            <div class="mt-4 pt-6 border-t border-festive-gold/20">
+                <p class="text-sm text-gray-400">With love & light from</p>
+                <p id="display-sender" class="text-2xl font-serif text-festive-gold mt-1"></p>
+            </div>
+        </div>
+
+        <!-- The Donation / Shagun Section -->
+        <div class="glass-card rounded-3xl p-6 text-center border border-festive-gold/30">
+            <h3 class="text-lg font-bold text-white mb-1">Send a Digital Shagun 🎁</h3>
+            <p class="text-xs text-gray-300 mb-5">If this brought a smile to your face, buy the creator a Diwali sweet!</p>
+            
+            <!-- Quick Amounts -->
+            <div class="grid grid-cols-3 gap-3 mb-5">
+                <button onclick="triggerUPI(11)" class="bg-black/40 border border-festive-gold/50 hover:bg-festive-gold hover:text-black text-festive-lightGold rounded-xl py-2 font-bold transition-all">₹11</button>
+                <button onclick="triggerUPI(21)" class="bg-black/40 border border-festive-gold/50 hover:bg-festive-gold hover:text-black text-festive-lightGold rounded-xl py-2 font-bold transition-all relative overflow-hidden">
+                    <span class="absolute top-0 right-0 bg-red-500 text-[10px] text-white px-1 rounded-bl-lg">POPULAR</span>
+                    ₹21
+                </button>
+                <button onclick="triggerUPI(51)" class="bg-black/40 border border-festive-gold/50 hover:bg-festive-gold hover:text-black text-festive-lightGold rounded-xl py-2 font-bold transition-all">₹51</button>
+            </div>
+
+            <!-- Desktop QR Code (Hidden on mobile via CSS usually, but we handle via JS if needed. Showing conditionally based on screen size could be done, but we'll show a toggle) -->
+            <div id="qr-container-wrapper" class="hidden mb-4">
+                <p class="text-xs text-gray-400 mb-2">Scan with any UPI app</p>
+                <div class="bg-white p-2 rounded-xl inline-block">
+                    <div id="qrcode"></div>
+                </div>
+            </div>
+
+            <button onclick="toggleQR()" class="text-xs text-festive-gold underline mb-6">Show Desktop QR Code</button>
+
+            <!-- Viral Loop Button -->
+            <button onclick="resetApp()" class="w-full bg-white text-black font-bold py-3.5 px-6 rounded-xl transition-all hover:bg-gray-200 shadow-lg flex items-center justify-center gap-2">
+                Create Your Own Wish ✨
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        // REPLACE THIS WITH YOUR ACTUAL UPI ID
+        const YOUR_UPI_ID = "yourvpa@upi"; 
+        const YOUR_NAME = "DiwaliCreator";
+
+        // DOM Elements
+        const viewCreate = document.getElementById('view-create');
+        const viewCard = document.getElementById('view-card');
+        const form = document.getElementById('create-form');
+        const shareSection = document.getElementById('share-section');
+        const generatedUrlInput = document.getElementById('generated-url');
+        const copyBtn = document.getElementById('copy-btn');
+        let qrcode = null;
+
+        // On Load: Check if URL has data hash
+        window.onload = () => {
+            const hash = window.location.hash.substring(1);
+            if (hash && hash.startsWith('data=')) {
+                loadGreeting(hash.replace('data=', ''));
+            } else {
+                // Show create form
+                viewCreate.classList.remove('hidden');
+            }
+        };
+
+        // Form Submit -> Generate Link
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const sender = document.getElementById('input-sender').value.trim();
+            const receiver = document.getElementById('input-receiver').value.trim();
+            const message = document.getElementById('input-message').value.trim();
+
+            const payload = { s: sender, r: receiver, m: message };
+            
+            // Encode safely for emojis and special characters
+            const encoded = btoa(encodeURIComponent(JSON.stringify(payload)));
+            
+            // Create shareable URL
+            const url = window.location.origin + window.location.pathname + '#data=' + encoded;
+            
+            generatedUrlInput.value = url;
+            shareSection.classList.remove('hidden');
+            
+            // Optional: Scroll down to share section
+            shareSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Copy functionality
+        copyBtn.addEventListener('click', () => {
+            generatedUrlInput.select();
+            generatedUrlInput.setSelectionRange(0, 99999); // For mobile
+            try {
+                document.execCommand('copy');
+                const originalText = copyBtn.innerText;
+                copyBtn.innerText = 'Copied! ✓';
+                copyBtn.classList.add('bg-green-500', 'text-white');
+                setTimeout(() => {
+                    copyBtn.innerText = originalText;
+                    copyBtn.classList.remove('bg-green-500', 'text-white');
+                }, 2000);
+            } catch (err) {
+                alert("Failed to copy. Please copy the link manually.");
+            }
+        });
+
+        // Load Greeting Card View
+        function loadGreeting(encodedData) {
+            try {
+                // Decode safely
+                const decoded = JSON.parse(decodeURIComponent(atob(encodedData)));
+                
+                document.getElementById('display-sender').innerText = decoded.s || 'Someone';
+                document.getElementById('display-receiver').innerText = decoded.r || 'Friend';
+                document.getElementById('display-message').innerText = decoded.m || 'Wishing you a very Happy Diwali!';
+
+                viewCreate.classList.add('hidden');
+                viewCard.classList.remove('hidden');
+
+                // Fire Diwali Confetti Effect!
+                shootFireworks();
+
+            } catch (e) {
+                console.error("Invalid data link", e);
+                // Fallback to create view if link is broken
+                window.location.hash = '';
+                viewCreate.classList.remove('hidden');
+            }
+        }
+
+        // UPI Trigger Function
+        function triggerUPI(amount) {
+            const upiString = `upi://pay?pa=${YOUR_UPI_ID}&pn=${YOUR_NAME}&am=${amount}&cu=INR&tn=DiwaliShagun`;
+            // Attempt to open intent
+            window.location.href = upiString;
+        }
+
+        // Toggle Desktop QR Code
+        function toggleQR() {
+            const wrapper = document.getElementById('qr-container-wrapper');
+            wrapper.classList.toggle('hidden');
+            
+            // Generate QR once if it doesn't exist
+            if (!wrapper.classList.contains('hidden') && !qrcode) {
+                // Generate a default 21 rs QR code as placeholder
+                const upiString = `upi://pay?pa=${YOUR_UPI_ID}&pn=${YOUR_NAME}&am=21&cu=INR&tn=DiwaliShagun`;
+                qrcode = new QRCode(document.getElementById("qrcode"), {
+                    text: upiString,
+                    width: 150,
+                    height: 150,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            }
+        }
+
+        // Reset App to create your own
+        function resetApp() {
+            window.location.href = window.location.pathname;
+        }
+
+        // Confetti Fireworks Animation
+        function shootFireworks() {
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                
+                // Fire from multiple origins
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                    colors: ['#fbbf24', '#fef08a', '#ef4444', '#f97316'] // Gold and Fire colors
+                }));
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                    colors: ['#fbbf24', '#fef08a', '#ef4444', '#f97316']
+                }));
+            }, 250);
+        }
+    </script>
+</body>
+</html>
