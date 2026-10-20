@@ -119,9 +119,6 @@
                 </button>
             </div>
             <p class="text-xs text-gray-400 mt-3">Share this link via WhatsApp or Instagram!</p>
-            <button onclick="window.open(document.getElementById('generated-url').value, '_self')" class="mt-3 text-festive-lightGold text-sm underline opacity-80 hover:opacity-100">
-                Preview Card
-            </button>
         </div>
     </div>
 
@@ -165,7 +162,7 @@
     </button>
             </div>
 
-            <!-- Desktop QR Code (Hidden on mobile via CSS usually, but we handle via JS if needed. Showing conditionally based on screen size could be done, but we'll show a toggle) -->
+            <!-- Desktop QR Code -->
             <div id="qr-container-wrapper" class="hidden mb-4">
                 <p class="text-xs text-gray-400 mb-2">Scan with any UPI app</p>
                 <div class="bg-white p-2 rounded-xl inline-block">
@@ -337,8 +334,8 @@
             }, 250);
         }
         window.addEventListener('hashchange', function() {
-    window.location.reload();
-});
+            window.location.reload();
+        });
     </script>
 </body>
 </html>
