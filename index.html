@@ -119,6 +119,9 @@
                 </button>
             </div>
             <p class="text-xs text-gray-400 mt-3">Share this link via WhatsApp or Instagram!</p>
+            <button onclick="window.open(document.getElementById('generated-url').value, '_self')" class="mt-3 text-festive-lightGold text-sm underline opacity-80 hover:opacity-100">
+                Preview Card
+            </button>
         </div>
     </div>
 
@@ -156,13 +159,9 @@
                     ₹21
                 </button>
                 <button onclick="triggerUPI(51)" class="bg-black/40 border border-festive-gold/50 hover:bg-festive-gold hover:text-black text-festive-lightGold rounded-xl py-2 font-bold transition-all">₹51</button>
-                <!-- The New Create Your Own Button -->
-    <button onclick="window.location.href = window.location.pathname" class="w-full mt-4 bg-white/10 border border-white/20 text-white font-semibold py-3 px-6 rounded-xl hover:bg-white/20 transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] backdrop-blur-sm">
-      ✨ Create Your Own
-    </button>
             </div>
 
-            <!-- Desktop QR Code -->
+            <!-- Desktop QR Code (Hidden on mobile via CSS usually, but we handle via JS if needed. Showing conditionally based on screen size could be done, but we'll show a toggle) -->
             <div id="qr-container-wrapper" class="hidden mb-4">
                 <p class="text-xs text-gray-400 mb-2">Scan with any UPI app</p>
                 <div class="bg-white p-2 rounded-xl inline-block">
@@ -218,10 +217,22 @@
             const encoded = btoa(encodeURIComponent(JSON.stringify(payload)));
             
             // Create shareable URL
+Commit this small script update to GitHub. Now, the moment the user clicks Generate, the button will vanish, the text boxes will dim out (showing they are locked), and their attention will be drawn completely to the newly generated magic link!$0
             const url = window.location.origin + window.location.pathname + '#data=' + encoded;
             
             generatedUrlInput.value = url;
             shareSection.classList.remove('hidden');
+            generateBtn.classList.add('hidden'); // Hide the button completely
+            
+            // Lock the input fields so the user knows the form is finalized
+            document.getElementById('input-sender').disabled = true;
+            document.getElementById('input-receiver').disabled = true;
+            document.getElementById('input-message').disabled = true;
+            
+            // Add visual cue that they are locked
+            document.getElementById('input-sender').classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('input-receiver').classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('input-message').classList.add('opacity-50', 'cursor-not-allowed');
             
             // Optional: Scroll down to share section
             shareSection.scrollIntoView({ behavior: 'smooth' });
@@ -333,9 +344,6 @@
                 }));
             }, 250);
         }
-        window.addEventListener('hashchange', function() {
-            window.location.reload();
-        });
     </script>
 </body>
 </html>
