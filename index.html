@@ -118,7 +118,14 @@
                     Copy
                 </button>
             </div>
-            <p class="text-xs text-gray-400 mt-3">Share this link via WhatsApp or Instagram!</p>
+            <div class="flex gap-2 mt-4 justify-center">
+    <button id="whatsapp-share-btn" type="button" class="flex-1 bg-green-500 text-white py-2 rounded-lg text-sm font-bold hover:bg-green-600 transition-colors">
+        WhatsApp
+    </button>
+    <button id="native-share-btn" type="button" class="flex-1 bg-white/20 text-white py-2 rounded-lg text-sm font-bold hover:bg-white/30 transition-colors border border-white/30">
+        Share App ✨
+    </button>
+</div>
         </div>
     </div>
 
@@ -237,6 +244,30 @@
             
             // Scroll down to share section
             shareSection.scrollIntoView({ behavior: 'smooth' });
+            // Social Sharing Logic
+            const whatsappBtn = document.getElementById('whatsapp-share-btn');
+            const nativeShareBtn = document.getElementById('native-share-btn');
+            const shareText = `I have sent you a special Diwali surprise! 🪔✨ Open it here: ${url}`;
+
+            whatsappBtn.onclick = () => {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
+            };
+
+            nativeShareBtn.onclick = async () => {
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: 'Happy Diwali! 🪔',
+                            text: 'I have sent you a special Diwali surprise! ✨',
+                            url: url
+                        });
+                    } catch (err) {
+                        console.log('User cancelled share');
+                    }
+                } else {
+                    alert("Direct sharing isn't supported on this browser. Just use the Copy button!");
+                }
+            };
         });
 
         // Copy functionality
