@@ -104,7 +104,7 @@
                 <textarea id="input-message" required rows="3" placeholder="Wishing you a Diwali full of light, joy, and prosperity..." 
                     class="w-full bg-black/30 border border-festive-gold/30 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-festive-gold transition-colors resize-none"></textarea>
             </div>
-            <button type="submit" class="w-full bg-gradient-to-r from-yellow-600 to-yellow-400 hover:from-yellow-500 hover:to-yellow-300 text-black font-bold py-3.5 px-6 rounded-xl transition-all transform hover:scale-[1.02] active:scale-95 shadow-[0_0_15px_rgba(251,191,36,0.4)]">
+            <button type="submit" id="generate-btn" class="w-full bg-gradient-to-r from-yellow-600 to-yellow-400 hover:from-yellow-500 hover:to-yellow-300 text-black font-bold py-3.5 px-6 rounded-xl transition-all transform hover:scale-[1.02] active:scale-95 shadow-[0_0_15px_rgba(251,191,36,0.4)]">
                 Generate Magic Link 🪔
             </button>
         </form>
@@ -119,9 +119,6 @@
                 </button>
             </div>
             <p class="text-xs text-gray-400 mt-3">Share this link via WhatsApp or Instagram!</p>
-            <button onclick="window.open(document.getElementById('generated-url').value, '_self')" class="mt-3 text-festive-lightGold text-sm underline opacity-80 hover:opacity-100">
-                Preview Card
-            </button>
         </div>
     </div>
 
@@ -159,9 +156,14 @@
                     ₹21
                 </button>
                 <button onclick="triggerUPI(51)" class="bg-black/40 border border-festive-gold/50 hover:bg-festive-gold hover:text-black text-festive-lightGold rounded-xl py-2 font-bold transition-all">₹51</button>
+                
+                <!-- Create Your Own Button -->
+                <button onclick="resetApp()" class="col-span-3 mt-2 bg-white/10 border border-white/20 text-white font-semibold py-3 px-6 rounded-xl hover:bg-white/20 transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] backdrop-blur-sm">
+                    ✨ Create Your Own
+                </button>
             </div>
 
-            <!-- Desktop QR Code (Hidden on mobile via CSS usually, but we handle via JS if needed. Showing conditionally based on screen size could be done, but we'll show a toggle) -->
+            <!-- Desktop QR Code -->
             <div id="qr-container-wrapper" class="hidden mb-4">
                 <p class="text-xs text-gray-400 mb-2">Scan with any UPI app</p>
                 <div class="bg-white p-2 rounded-xl inline-block">
@@ -169,12 +171,7 @@
                 </div>
             </div>
 
-            <button onclick="toggleQR()" class="text-xs text-festive-gold underline mb-6">Show Desktop QR Code</button>
-
-            <!-- Viral Loop Button -->
-            <button onclick="resetApp()" class="w-full bg-white text-black font-bold py-3.5 px-6 rounded-xl transition-all hover:bg-gray-200 shadow-lg flex items-center justify-center gap-2">
-                Create Your Own Wish ✨
-            </button>
+            <button onclick="toggleQR()" class="text-xs text-festive-gold underline">Show Desktop QR Code</button>
         </div>
     </div>
 
@@ -191,6 +188,7 @@
         const shareSection = document.getElementById('share-section');
         const generatedUrlInput = document.getElementById('generated-url');
         const copyBtn = document.getElementById('copy-btn');
+        const generateBtn = document.getElementById('generate-btn');
         let qrcode = null;
 
         // On Load: Check if URL has data hash
@@ -207,9 +205,14 @@
         // Form Submit -> Generate Link
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            const sender = document.getElementById('input-sender').value.trim();
-            const receiver = document.getElementById('input-receiver').value.trim();
-            const message = document.getElementById('input-message').value.trim();
+            
+            const senderInput = document.getElementById('input-sender');
+            const receiverInput = document.getElementById('input-receiver');
+            const messageInput = document.getElementById('input-message');
+            
+            const sender = senderInput.value.trim();
+            const receiver = receiverInput.value.trim();
+            const message = messageInput.value.trim();
 
             const payload = { s: sender, r: receiver, m: message };
             
@@ -217,24 +220,24 @@
             const encoded = btoa(encodeURIComponent(JSON.stringify(payload)));
             
             // Create shareable URL
-Commit this small script update to GitHub. Now, the moment the user clicks Generate, the button will vanish, the text boxes will dim out (showing they are locked), and their attention will be drawn completely to the newly generated magic link!$0
             const url = window.location.origin + window.location.pathname + '#data=' + encoded;
             
             generatedUrlInput.value = url;
             shareSection.classList.remove('hidden');
-            generateBtn.classList.add('hidden'); // Hide the button completely
             
-            // Lock the input fields so the user knows the form is finalized
-            document.getElementById('input-sender').disabled = true;
-            document.getElementById('input-receiver').disabled = true;
-            document.getElementById('input-message').disabled = true;
+            // Disappear the generate button
+            generateBtn.classList.add('hidden');
             
-            // Add visual cue that they are locked
-            document.getElementById('input-sender').classList.add('opacity-50', 'cursor-not-allowed');
-            document.getElementById('input-receiver').classList.add('opacity-50', 'cursor-not-allowed');
-            document.getElementById('input-message').classList.add('opacity-50', 'cursor-not-allowed');
+            // Lock the input fields and slightly dim them
+            senderInput.disabled = true;
+            receiverInput.disabled = true;
+            messageInput.disabled = true;
             
-            // Optional: Scroll down to share section
+            senderInput.classList.add('opacity-60', 'cursor-not-allowed');
+            receiverInput.classList.add('opacity-60', 'cursor-not-allowed');
+            messageInput.classList.add('opacity-60', 'cursor-not-allowed');
+            
+            // Scroll down to share section
             shareSection.scrollIntoView({ behavior: 'smooth' });
         });
 
@@ -269,7 +272,7 @@ Commit this small script update to GitHub. Now, the moment the user clicks Gener
                 viewCreate.classList.add('hidden');
                 viewCard.classList.remove('hidden');
 
-                // Fire Diwali Confetti Effect!
+                // Fire Diwali Confetti Effect
                 shootFireworks();
 
             } catch (e) {
@@ -339,11 +342,4 @@ Commit this small script update to GitHub. Now, the moment the user clicks Gener
                 }));
                 confetti(Object.assign({}, defaults, { 
                     particleCount, 
-                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-                    colors: ['#fbbf24', '#fef08a', '#ef4444', '#f97316']
-                }));
-            }, 250);
-        }
-    </script>
-</body>
-</html>
+                    origin: { x
