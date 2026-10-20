@@ -177,7 +177,6 @@
 
     <script>
         // --- CONFIGURATION ---
-        // REPLACE THIS WITH YOUR ACTUAL UPI ID
         const YOUR_UPI_ID = "yourvpa@upi"; 
         const YOUR_NAME = "DiwaliCreator";
 
@@ -191,16 +190,15 @@
         const generateBtn = document.getElementById('generate-btn');
         let qrcode = null;
 
-        // On Load: Check if URL has data hash
-        window.onload = () => {
+        // Initialization (Runs immediately instead of waiting for window.onload)
+        function initApp() {
             const hash = window.location.hash.substring(1);
             if (hash && hash.startsWith('data=')) {
                 loadGreeting(hash.replace('data=', ''));
             } else {
-                // Show create form
                 viewCreate.classList.remove('hidden');
             }
-        };
+        }
 
         // Form Submit -> Generate Link
         form.addEventListener('submit', (e) => {
@@ -272,8 +270,12 @@
                 viewCreate.classList.add('hidden');
                 viewCard.classList.remove('hidden');
 
-                // Fire Diwali Confetti Effect
-                shootFireworks();
+                // Try to fire confetti (wrapped in try-catch in case library is blocked by ad-blocker)
+                try {
+                    shootFireworks();
+                } catch(err) {
+                    console.log("Confetti blocked or not loaded yet.");
+                }
 
             } catch (e) {
                 console.error("Invalid data link", e);
@@ -297,16 +299,19 @@
             
             // Generate QR once if it doesn't exist
             if (!wrapper.classList.contains('hidden') && !qrcode) {
-                // Generate a default 21 rs QR code as placeholder
-                const upiString = `upi://pay?pa=${YOUR_UPI_ID}&pn=${YOUR_NAME}&am=21&cu=INR&tn=DiwaliShagun`;
-                qrcode = new QRCode(document.getElementById("qrcode"), {
-                    text: upiString,
-                    width: 150,
-                    height: 150,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
-                });
+                try {
+                    const upiString = `upi://pay?pa=${YOUR_UPI_ID}&pn=${YOUR_NAME}&am=21&cu=INR&tn=DiwaliShagun`;
+                    qrcode = new QRCode(document.getElementById("qrcode"), {
+                        text: upiString,
+                        width: 150,
+                        height: 150,
+                        colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
+                    });
+                } catch(err) {
+                    console.log("QR Library blocked or not loaded.");
+                }
             }
         }
 
@@ -338,8 +343,23 @@
                 confetti(Object.assign({}, defaults, { 
                     particleCount, 
                     origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-                    colors: ['#fbbf24', '#fef08a', '#ef4444', '#f97316'] // Gold and Fire colors
+                    colors: ['#fbbf24', '#fef08a', '#ef4444', '#f97316']
                 }));
                 confetti(Object.assign({}, defaults, { 
                     particleCount, 
-                    origin: { x
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                    colors: ['#fbbf24', '#fef08a', '#ef4444', '#f97316']
+                }));
+            }, 250);
+        }
+        
+        // Listen for back button or manual URL change
+        window.addEventListener('hashchange', function() {
+            window.location.reload();
+        });
+
+        // Run Init instantly
+        initApp();
+    </script>
+</body>
+</html>
